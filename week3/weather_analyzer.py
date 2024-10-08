@@ -14,8 +14,6 @@ df = pd.read_csv('Extended_Weather_Data.csv')
 df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 df = df.dropna()
 
-# print(mean)
-
 #Create a line chart showing temperature trend over time 
 # Make a bar chart for monthly precipitation 
 # Show a scatter chart for temperature vs humidity 
@@ -23,7 +21,7 @@ df = df.dropna()
 # parameters
 
 plt.figure(figsize=(10,8))
-plt.plot(df['Date'], df['Temperature'])
+plt.plot(df['Date'], df['Temperature'], marker='o')
 plt.title('Temperature trend over time in 2023')
 plt.xlabel('Date of the temperature')
 plt.ylabel('Temperature in Celcius')
@@ -35,16 +33,16 @@ month_avg_temp.index = month_avg_temp.index.to_timestamp()
 
 plt.figure(figsize=(10,8))
 plt.bar(month_avg_temp.index, month_avg_temp, color='red', width=0.8)
-plt.title('Temperature bar chart')
+plt.title('Montly Average Temperature bar chart')
 plt.xlabel('Montly date')
-plt.ylabel('Temperature in celcius °C')
+plt.ylabel('Temperature celcius °C')
 
 #Scatterplot for temperature cs humidity
 plt.figure(figsize=(10,8))
 #using temperature as color mapping
 scatter = plt.scatter(df['Humidity'], df['Temperature'], c=df['Temperature'], cmap='coolwarm')
 plt.colorbar(scatter, label='Temperature °C')
-plt.title('Temperature vs Humidity scatter chart')
+plt.title('Temperature vs Humidity scatter chart (Colored by Temperature)')
 plt.xlabel('Humidity %')
 plt.ylabel('Temperature °C')
 
@@ -53,13 +51,20 @@ plt.figure(figsize=(10,8))
 
 #Calculate the correlation matrix for weather parameters
 corr_matrix = df[['Temperature', 'Humidity', 'Pressure', 'WindSpeed', 'Precipitation']].corr()
-heatmap = sns.heatmap(corr_matrix, cmap='coolwarm', annot=True, fmt='.2f')
+heatmap = sns.heatmap(corr_matrix, cmap='coolwarm', annot=True, fmt='.2f', linewidths=0.5)
 heatmap.set_title('Correlation in Temperature')
 
 #Use a simple method (e.g. moving average 5) to predict tomorrow's 
 # temperature Show the forecast compared to actual temperatures
 df['MA_5'] = df['Temperature'].rolling(window=5).mean()
-
+#Shows the plot between actual vs predicted forecasting
+plt.figure(figsize=(10,8))
+plt.plot(df['Date'], df['Temperature'], label='Actual')
+plt.plot(df['Date'], df['MA_5'], label='Moving Average 5 Days')
+plt.legend()
+plt.title('Actual vs Moving average Temperature')
+plt.xlabel('Date')
+plt.ylabel('Temperature')
 #Generate TLDR on the whole report including Moving average 5
 print(df)
 
@@ -96,4 +101,4 @@ plt.savefig('weather_analysis_plots.png', bbox_inches='tight')
 df.to_csv('weather_data.txt', sep='\t', index=False)
 
 plt.show()
-
+plt.close()#Avoid memory leak
