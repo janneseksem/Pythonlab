@@ -55,8 +55,45 @@ plt.figure(figsize=(10,8))
 corr_matrix = df[['Temperature', 'Humidity', 'Pressure', 'WindSpeed', 'Precipitation']].corr()
 heatmap = sns.heatmap(corr_matrix, cmap='coolwarm', annot=True, fmt='.2f')
 heatmap.set_title('Correlation in Temperature')
-plt.show()
 
-#Use a simple method (e.g. moving average) to predict tomorrow's 
+#Use a simple method (e.g. moving average 5) to predict tomorrow's 
 # temperature Show the forecast compared to actual temperatures
+df['MA_5'] = df['Temperature'].rolling(window=5).mean()
+
+#Generate TLDR on the whole report including Moving average 5
+print(df)
+
+#Outdata, Four visualizations in PNG format 
+# (trend, Humidity,Pressure,WindSpeed,Precipitation) 
+# A text file with summary statistics and forecast performance
+
+fig, axes = plt.subplots(2,2, figsize=(10,8))
+#Trend line
+sns.lineplot(x='Date', y='Precipitation', data=df, ax=axes[0,0])
+axes[0,0].set_title('Trend over time in Precipitation')
+axes[0,0].set_xlabel('Date')
+axes[0,0].set_ylabel('Precipitation')
+axes[0,0].tick_params(axis='x', rotation=45)
+#Barplot
+sns.barplot(x='Date', y='Precipitation', data=df, ax=axes[0,1])
+axes[0,1].set_title('The amount of Precipitation')
+axes[0,1].set_xlabel('Date')
+axes[0,1].set_ylabel('Precipitation')
+#Histogram
+sns.histplot(df['WindSpeed'], ax=axes[1,0]) #Histogram for windspeed
+axes[1,0].set_title('Histogram for Windspeed')
+#Scatter 
+sns.scatterplot(x='WindSpeed', y='Pressure', data=df, ax=axes[1,1])
+axes[1,1].set_title('Correlation between relation in Windspeed and pressure')
+axes[1,1].set_xlabel('Windspeed')
+axes[1,1].set_ylabel('Pressure')
+
+#Saves outdata in PNG
+plt.tight_layout()
+plt.savefig('weather_analysis_plots.png', bbox_inches='tight')
+
+#Saves dataframe to a .txt file
+df.to_csv('weather_data.txt', sep='\t', index=False)
+
+plt.show()
 
