@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from tensorflow.keras import regularizers
 
 
 df = pd.read_csv('england-premier-league-matches-2018-to-2019-stats.csv')
@@ -63,19 +64,22 @@ print(f"Shape of X_train_scale: {X_train_scale.shape}")
 
 #Skapa modellen med linear
 model = tf.keras.Sequential([
-    tf.keras.layers.Input(shape=(X_train_scale.shape[1],)),
-    tf.keras.layers.Dense(16, activation='relu'),
-    tf.keras.layers.Dense(8, activation='relu'),
+    tf.keras.layers.Dense(64, activation='relu', input_shape=(X_train_scale.shape[1],)),
+    tf.keras.layers.Dropout(0.3),  # Add a dropout layer to prevent overfitting
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dropout(0.3),  # Add a dropout layer to prevent overfitting
     tf.keras.layers.Dense(1, activation='linear')
 ])
 
 # Kompilera modellen
 
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), 
+              loss='mean_squared_error', 
+              metrics=['mae'])
 
 #Träna modellen
 
-history = model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2, verbose=1)
+model.fit(X_train_scale, y_train, epochs=200, batch_size=64, validation_split=0.2, verbose=1)
 
 #utvärdera modellen
 
@@ -85,4 +89,5 @@ print(f'Mean Absolute Error test accuracy: {mae}')
 #förutse
 predictions = model.predict(X_test_scale)
 
-# print(predictions)
+print(predictions)
+
