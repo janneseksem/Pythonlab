@@ -17,20 +17,22 @@ Getting Started
 
 To run the game, simply execute the Python script in a console. Make sure you have Python 3.x installed.
 
+
 Project-2: Neural Network Modeling for Home/Away team shots
 
-    Introduktion och översikt över projektidén
+1. Introduktion och översikt över projektidén
 
-Projektet syftar till att utveckla en neural nätverksmodell för att förutsäga antalet skott ett lag kommer att försöka under en match och de tillhörande sannolikhet för att uppnå specifika skottresultat. Genom att utnyttja historiska data från den tillhandahållna CSV-filen försöker modellen identifiera betydande mönster och trender som påverkar en av teamets prestationer.
+Projektet syftar till att utveckla en neural nätverksmodell för att förutsäga antalet skott ett lag kommer att försöka under en match och de tillhörande sannolikhet för att uppnå specifika skottresultat. Genom att utnyttja historiska data från den tillhandahållna CSV-filen försöker modellen identifiera betydande mönster och trender som påverkar en av teamets 
+prestationer.
 
-    Dataanalys och förbearbetning
+2. Dataanalys och förbearbetning
 
-Datauppsättningen från England Premier League 2018-2019 som finns gratis i footystats kan laddas ned .csv fil eller spain-la-liga-matches-2023-to-2024-stats (Använder la liga för det är nyare data) kommer att genomgå utforskande dataanalys för att identifiera nyckelfaktorer som påverkar skottförsök. För Bearbetningsfasen kommer att innefatta data cleaning, handling missing values, och normalisering av variabler för att förbättra modellens träningseffektivitet. Relevanta funktioner som lagstatistik kommer att identifieras för modellinmatning.
+Datauppsättningen från England Premier League 2018-2019 som finns gratis i footystats kan laddas ned .csv fil kommer att genomgå utforskande dataanalys för att identifiera nyckelfaktorer som påverkar skottförsök. För Bearbetningsfasen kommer att innefatta data cleaning, handling missing values,  och normalisering av variabler för att förbättra modellens träningseffektivitet. Relevanta funktioner som lagstatistik kommer att identifieras för modellinmatning.
 
-    Att bygga den prediktiva neural network modell
+3. Att bygga den prediktiva neural network modell
 
-Ett neural network kommer att konstrueras för att förutsäga antalet skott som varje lag försöker göra genom att kolla hur många skott Hemma och borta laget skjuts, men samt använda motståndarens antal skott som har skjutit mot laget. Arkitekturen innehåller flera hidden layers med aktiverings funktioner som att testa fram exempelvis ReLU. Modellen kommer att tränas med hjälp av en backpropagation-algoritm, med loss function och en adaptive optimizer som testar fram exempelvis Adam. Data Uppsättningen kommer att delas upp i training- och test sets.
+Ett neural network kommer att konstrueras för att förutsäga antalet skott som varje lag försöker göra. Arkitekturen innehåller flera hidden layers med aktiverings funktioner som att testa fram exempelvis ReLU. Modellen kommer att tränas med hjälp av en backpropagation-algoritm, med loss function och en adaptive optimizer som testar fram exempelvis Adam. Data Uppsättningen kommer att delas upp i training- och test sets.
 
-Sammanfattningsvis
+Sammanfattningsvis 
 
 Detta projekt använder sig av ett neural network för att förutsäga skottförsök i fotbollsmatcher och härleda modellbaserad sannolikhet. De prediktiva insikterna som genereras kommer att bidra till bättre strategiskt beslutsfattande för team och mer informerade risk utvärderingar. Flera olika metoder kommer testas tills man får en relevant accuracy för sin modell.
