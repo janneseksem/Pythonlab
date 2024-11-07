@@ -25,6 +25,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
 
 #Loading the breast cancer dataset
 breast_cancer = load_breast_cancer()
@@ -56,8 +57,9 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 model.fit(X_train_scaled, y_train, epochs=10, batch_size=32, validation_split=0.2)
 
 #Evaluate the accuracy of the model on a test set
-from sklearn.metrics import accuracy_score, classification_report
 predictions = (model.predict(X_test_scaled) > 0.5).astype(int)
 
+#Summary of models accuracy on a testset
 print("Keras model accuracy:", accuracy_score(y_test, predictions))
 print(classification_report(y_test, predictions))
+

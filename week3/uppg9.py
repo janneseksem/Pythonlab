@@ -16,3 +16,4 @@ arr2 = np.array(([1,3,3,1],
 
 arr3 = np.multiply(arr1,arr2)
 print(arr3)
+

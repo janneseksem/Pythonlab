@@ -1,3 +1,11 @@
+'''
+Skriv en klass Bankkonto
+
+    Den ska ha attributen owner och dess saldo/balance kommer initialt vara 0.
+    Skapa metoder såsom deposit(amount) för att lägga till pengar till kontot samt withdraw(amount) för att ta ut pengar från kontot. Se också till att saldot ej kan bli negativ!
+    Skapa en metod display_balance() för som printar kontots nuvarande saldo.
+'''
+
 class Bankkonto:
     def __init__(self, owner, balance):
 

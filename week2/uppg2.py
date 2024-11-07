@@ -1,5 +1,16 @@
 import math
 
+'''Skriv en klass Matte Den ska ha följande metoder
+
+    add(a,b): Returnerar summan
+    subtract(a,b): returnerar skillnaden
+    divide(a,b): returnerar divisionen
+    multiply(a,b): returnerar multiplikationen
+    gcd(a,b): returnerar största gemensamma delare
+    area_circle(r): returnerar arean av en cirkel
+    circumference(d): returnerar omkretsen av en cirkel
+'''
+
 class Matte:
     
     def add(self, a, b):

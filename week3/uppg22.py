@@ -46,5 +46,6 @@ plt.ylabel('Salaries')
 plt.scatter(X_test, y_test, color ='blue', label='Actual Data')
 plt.plot(X_test, y_pred, color='red', label='Regression Line')
 
+plt.legend()
 
 plt.show()

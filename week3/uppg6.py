@@ -9,3 +9,4 @@ df = pd.read_csv('sample_data0.csv')
 df_melt = pd.melt(df, value_vars=['Salary', 'Performance_Score'])
 
 print(df_melt)
+

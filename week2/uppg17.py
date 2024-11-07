@@ -19,7 +19,7 @@ except ZeroDivisionError:
     print("Error: cant be divided by zero")
 
 try:
-    data3 = int(input("Mata in något som är inte ett tal: "))
+    data3 = int(input("Mata in något som är inte ett tal: 5"))
     print(data3)
 
 except ValueError:

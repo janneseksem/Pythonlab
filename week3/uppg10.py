@@ -17,3 +17,4 @@ b = np.array(([8],
 line = np.linalg.solve(a,b)
 
 print(line)
+

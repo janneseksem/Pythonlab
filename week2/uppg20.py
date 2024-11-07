@@ -20,3 +20,4 @@ print(product)
 
 det = np.linalg.det(product)
 print(f"\nDeterminant of resultat: {det}")
+

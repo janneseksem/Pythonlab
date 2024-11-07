@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import random
+
 
 '''
 Skapa en NumPy-array med slumpmässiga tal, använd sedan 
@@ -19,3 +19,4 @@ df = pd.DataFrame(arr)
 plt.hist(df)
 
 plt.show()
+

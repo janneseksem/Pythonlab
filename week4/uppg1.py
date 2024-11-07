@@ -24,13 +24,13 @@ california_housing = fetch_california_housing()
 #Convert into pandas dataframe
 
 df = pd.DataFrame(california_housing.data, columns=california_housing.feature_names)
-df['target'] = california_housing.target
+df['Target'] = california_housing.target
 
 # print(df.head())
 
 #split in features and target variables
-X = df.drop('target', axis=1)
-y = df['target']
+X = df.drop('Target', axis=1)
+y = df['Target']
 
 #Split in training and testset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)

@@ -23,5 +23,5 @@ with open("example4.txt", "r") as file:
         else:
             ord_frekvens[i] = 1
 
-#expected output: {'hej': 2, 'världen': 1}
+#Expected output: {'hej': 3, 'världen': 1, 'detta': 1, 'är': 1, 'en': 1, 'enkel': 1, 'testtext': 1, 'igen': 1}
 print(ord_frekvens)

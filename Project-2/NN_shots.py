@@ -64,16 +64,16 @@ print(f"Shape of X_train_scale: {X_train_scale.shape}")
 
 #Skapa modellen med linear
 model = tf.keras.Sequential([
-    tf.keras.layers.Dense(64, activation='relu', input_shape=(X_train_scale.shape[1],)),
+    tf.keras.layers.Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.01), input_shape=(X_train_scale.shape[1],)),
     tf.keras.layers.Dropout(0.3),  # Add a dropout layer to prevent overfitting
-    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.01)), 
     tf.keras.layers.Dropout(0.3),  # Add a dropout layer to prevent overfitting
     tf.keras.layers.Dense(1, activation='linear')
 ])
 
 # Kompilera modellen
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), 
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.05), 
               loss='mean_squared_error', 
               metrics=['mae'])
 
@@ -87,7 +87,12 @@ loss, mae = model.evaluate(X_test_scale, y_test)
 print(f'Mean Absolute Error test accuracy: {mae}')
 
 #förutse
-predictions = model.predict(X_test_scale)
+model_predict = model.predict(X_test_scale[0:])
 
-print(predictions)
+#print(predictions)
+
+print(model.evaluate(X_test_scale, y_test))
+
+print(model_predict[0:10])
+print(y_test[0:10])
 

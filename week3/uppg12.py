@@ -12,3 +12,4 @@ np.fill_diagonal(arr, arr1)
 
 print(arr)
 
+
