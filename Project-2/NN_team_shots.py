@@ -29,6 +29,11 @@ def get_team_shots(df, team_name, home_or_away):
     
     return team_df
 
+#Funktion för data användning till modellen
+def get_data_prediction(home_team, away_team):
+    home_team_shots = get_team_shots(df, home_team, 'home')
+    away_team_shots = get_team_shots(df, away_team, 'away')
+    return home_team_shots, away_team_shots
 
 #Exempel användning, tas Osasuna som hemmaplan och Almeria som bortalag
 #För osasuna som hemmalag
@@ -43,3 +48,6 @@ print("Almeria Away Shots and opponent Shots:\n", almeria_away_shots)
 Skapa modell, neural network
 Predikta antal skott och se accuracy och försöker få ner absolute error 
 '''
+#Spara data för NN_model.py
+# osasuna_home_shots.to_csv('osasuna_home_shots.csv', index=False)
+# almeria_away_shots.to_csv('almeria_away_shots.csv', index=False)
