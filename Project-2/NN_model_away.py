@@ -16,12 +16,12 @@ på opponents lag och om laget är home/away'''
 
 #Definerar labels och Features
 X = pd.DataFrame({
-    #Osasuna historik data för osasuna skott i hemmaplan
+    #Almeria historik data för Almeria skott i bortaplan
     'away_shots': away_shots['team_shots'],
     #Skott från Almeria's motståndaren när almeria är i bortaplan
     'opponent_shots': home_shots['opponent_shots']
 })
-#Osasuna faktiska skott i hemmaplan
+#Almeria faktiska skott i hemmaplan
 y = away_shots['team_shots']
 
 #Split train and test med 80% training och 20% testing
@@ -76,7 +76,7 @@ print("Actual values: ", y_test.values)
 away_avg_shots = away_shots['team_shots'].mean()
 home_avg_opponent_shots = home_shots['opponent_shots'].mean()
 
-#Inputs förutse Osasuna idag
+#Inputs förutse Almeria idag
 today_match_data_away = pd.DataFrame({
     'away_shots': [away_avg_shots],
     'opponent_shots': [home_avg_opponent_shots]
