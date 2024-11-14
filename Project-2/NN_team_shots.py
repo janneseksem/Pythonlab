@@ -1,5 +1,32 @@
 import pandas as pd
 
+'''
+Fattas motståndarens tillåtna skott i både .csv
+TODO
+Exempelvis predikta Osasuna kommer skjuta i hemmaplan mot Almeria.
+Behöver:
+
+- Osasuna har gjort skott i hemmaplan mot motståndaren 
+läggs i team_shots
+
+- Hur mycket skott har gjort mot Osasuna 
+(för predikta almeria skott) och läggs i läggs opponent_shots 
+
+- Hur mycket average gör den motståndaren 
+att ta emot skott från andra lag när motståndaren är bortaplan
+ocg lägger i home_shots.csv, 
+ 
+Exempelvis (fantasi nummer) i home_shots.csv:
+Osasuna	vs Athletic Club
+Osasuna vs FC Barcelona
+osv...
+Osasuna har gjort 18 skott, Athletic club har gjort 8 skott, Athletic club har average 15,32 tillåtna skott som motståndaren skjuter när Athletic club är bortaplan
+team_shots,opponent_shots,opponent_allow_avg
+18,8,15.32
+
+- Samma princip för predikta Almeria kommer skjuta i bortaplan mot Osasuna
+'''
+
 df = pd.read_csv('la_liga_results_2324.csv')
 
 #Åtgärda fel från Str till NaN och fyll med heltal med 0
