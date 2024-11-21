@@ -2,15 +2,15 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
+
 # Ladda vår data till Dataframe
 df = pd.read_csv('fixed_merged_la_liga_results.csv')
-
-
 
 # one-hot coding till Features/Labels 
 df_one_hot = pd.get_dummies(df)
@@ -19,15 +19,13 @@ df_one_hot = pd.get_dummies(df)
 X = df_one_hot.drop('home_total_shots', axis=1)
 y = df_one_hot['home_total_shots']
 
-
 # print(f'X: {X.shape}')
 
 # train test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-#Identifera NaN, missing values
+#Identifera null värden (finns vid yellow_red kolumn)
 missing_cols = X_train.columns[X_train.isnull().any()]
-
 X_train = X_train.drop(columns=missing_cols)
 X_test = X_test.drop(columns=missing_cols)
 
@@ -49,8 +47,8 @@ X_test_scaled.dropna(axis=1, inplace=True)
 param_grid = {
     'n_estimators': [100, 200, 300],
     'max_depth': [None, 10, 20, 30],
-    'min_samples_split': [5, 10],
-    'min_samples_leaf': [2, 3, 4]
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
 }
 
 # Skapar RandomforestClassifier
@@ -64,15 +62,14 @@ grid_search.fit(X_train_scaled, y_train)
 print("Bästa parametrar:", grid_search.best_params_)
 print("Bästa cross-validation score:", grid_search.best_score_)
 print(f"Train Accuracy: {grid_search.score(X_train_scaled, y_train):.3f}")
-print(f"Test Accuracy: {grid_search.score(X_test_scaled, y_test):.3f}")
+print(f"Test Accuracy (r2): {grid_search.score(X_test_scaled, y_test):.3f}")
 
 #Utför bästa modellen på test datan (X_test)
 best_model = grid_search.best_estimator_
 y_predict = best_model.predict(X_test_scaled)
 mse = mean_squared_error(y_test, y_predict)
-r2 = r2_score(y_test, y_predict)
 print("Mean Squared Error:", mse)
-print("R² Score:", r2)
+
 
 #Plotta GridSearchCV resultat med MTS v Hyperparameterna
 results = pd.DataFrame(grid_search.cv_results_)
@@ -84,12 +81,20 @@ plt.ylabel('Mean test score')
 plt.title('GridSearchCV Results')
 plt.show()
 
-# Plot predictions vs actual
-plt.figure(figsize=(10, 7))
-plt.scatter(range(len(y_test)), y_test, c='g', label="Actual")
-plt.scatter(range(len(y_predict)), y_predict, c='r', label="Predicted")
+#plot training data
+xAxis = tf.range(0, len(X_test))
+xAxis, y_test[0:len(X_test)]
+
+xAxis = tf.range(0, len(X_test))
+
+yAxis = y_test.to_numpy()
+yAxis = tf.cast(yAxis, tf.float32)
+shot_modelPredictYAxis = tf.cast(y_predict, tf.float32)
+    
+plt.figure(figsize=(10,7))
+plt.scatter(xAxis, yAxis, c='g', label="Test data")
+#plot TEST data
+plt.scatter(xAxis, shot_modelPredictYAxis, c='r', label="predictions")
+#plot predictions
 plt.legend()
-plt.xlabel("Index")
-plt.ylabel("Home Total Shots")
-plt.title("Actual vs Predicted: Random Forest")
 plt.show()
