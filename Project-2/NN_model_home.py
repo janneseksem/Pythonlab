@@ -8,44 +8,7 @@ from sklearn.metrics import r2_score, mean_absolute_error
 
 
 '''
-SMALL DATASET??
-Modeller som kan funka:
-- Random Forest
-- Decision Trees
-- Support vector machines
-- K-Nearest Neighbors
-- Poisson regression
-- Linear Regression
-
-'''
-'''
-Ladda 2 skapade .csv för skapa modell med:
-- Antal skott Hemmalaget har gjort
-- Antal skott Bortalaget tar emot skott från motståndaren har gjort
-- Medelvärdet på hur mycket motståndaren skjuter & 
-tar emot skott när de är bortalaget
-Exempelvis:
-Osasuna har gjort 18,11,16.... skott 
-column team_shots i home_shots.csv
-
-Almerias som är bortaplan har motståndaren skjutit mot Almeria 
-15,30,19 osv column opponent_shots i away_shots.csv
-
-Matchen när Osasuna har gjort 18 skott är mot Athletic club 
-i bortaplan har medelvärdet 12,58 som låter hemma laget skjuta 
-mot Athletic club
-
-För förutse antal skott Osasuna gör mot Almera skapas:
-model 1 för Osasuna skott i hemmaplan
-model 2 för Almerias i bortaplan för motståndarens tillåtna 
-skott mot Almeria
-
-Adderar 2 modeller och delar med 2 för få fair nummer på hur mycket
-Osasuna i hemmaplan gör mot Almeria
-
-Plotta med matplotlib
-
-EXTRA?:
+SMALL DATASET?
 '''
 
 class DataPreperation:
