@@ -16,7 +16,6 @@ class DataPreperation:
 
     def OneHot(self):
         
-        
         self.df = pd.get_dummies(self.df)
 
         X = self.df.drop('home_total_shots', axis=1)
@@ -34,17 +33,6 @@ class DataPreperation:
         X_train_scaled.dropna(axis=1, inplace=True)
         X_test_scaled.dropna(axis=1, inplace=True)
         return X_train_scaled, X_test_scaled, y_train, y_test
-
-    # def load_df(self):
-    #         self.OneHot()
-            
-    #         X = self.df.drop('home_total_shots', axis=1)
-    #         y = self.df['home_total_shots']
-
-    #         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-    #         X_train_scaled = self.scaler.fit_transform(X_train)
-    #         X_test_scaled = self.scaler.transform(X_test)
-    #         return X_train_scaled, X_test_scaled, y_train, y_test
 
 class NeuralNetwork:
     def __init__(self):
