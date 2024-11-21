@@ -1,60 +1,92 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import r2_score, mean_absolute_error
+import statsmodels.api as sm
 
+'''
+SMALL DATASET??
+Modeller som kan funka:
+- Random Forest
+- Decision Trees
+- Support vector machines
+- K-Nearest Neighbors
+- Poisson regression
+- Linear Regression
+
+'''
+'''
+Ladda 2 skapade .csv för skapa modell med:
+- Antal skott Hemmalaget har gjort
+- Antal skott Bortalaget tar emot skott från motståndaren har gjort
+- Medelvärdet på hur mycket motståndaren skjuter & 
+tar emot skott när de är bortalaget
+Exempelvis:
+Osasuna har gjort 18,11,16.... skott 
+column team_shots i home_shots.csv
+
+Almerias som är bortaplan har motståndaren skjutit mot Almeria 
+15,30,19 osv column opponent_shots i away_shots.csv
+
+Matchen när Osasuna har gjort 18 skott är mot Athletic club 
+i bortaplan har medelvärdet 12,58 som låter hemma laget skjuta 
+mot Athletic club
+
+För förutse antal skott Osasuna gör mot Almera skapas:
+model 1 för Osasuna skott i hemmaplan
+model 2 för Almerias i bortaplan för motståndarens tillåtna 
+skott mot Almeria
+
+Adderar 2 modeller och delar med 2 för få fair nummer på hur mycket
+Osasuna i hemmaplan gör mot Almeria
+
+Plotta med matplotlib
+
+EXTRA?:
+'''
 
 class DataPreperation:
-    def __init__(self, home_csv, away_csv):
+    def __init__(self, merged_csv):
         self.scaler = StandardScaler()
-        
-        self.home_data = pd.read_csv(home_csv)
-        self.away_data = pd.read_csv(away_csv)
+        self.df = pd.read_csv(merged_csv)
 
-    def load_df(self, target):
-        
-        if target == 'home':
-            X = pd.DataFrame({
-                'team_shots': self.home_data['team_shots'], 
-                'opponent_shots': self.away_data['opponent_shots']
-            })
-            y = self.home_data['team_shots']
+    def preprocess_data(self):
+         # Convert the date column to a numerical feature (e.g., UNIX timestamp or drop it)
+        if 'date' in self.df.columns:
+            self.df['date'] = pd.to_datetime(self.df['date'], errors='coerce')
+            self.df['date_numeric'] = self.df['date'].astype(np.int64) // 10**9  # UNIX timestamp
+            self.df.drop(columns=['date'], inplace=True)
 
-        elif target == 'opponent_home':
-            X = pd.DataFrame({
-                'team_shots': self.home_data['team_shots'], 
-                'opponent_shots': self.away_data['opponent_shots']
-            })
-            y = self.away_data['opponent_shots']
-        
-        else:
-            raise ValueError("Target måste vara 'home' eller 'opponent")
-        
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        X_train_scaled = self.scaler.fit_transform(X_train)
-        X_test_scaled = self.scaler.transform(X_test)
+        # Drop any remaining non-numeric columns
+        self.df = self.df.select_dtypes(include=[np.number])
 
-        return X_train_scaled, X_test_scaled, y_train, y_test
-    
-    def scaled_today_match_data(self, home_avg_shots, away_avg_opponent_shots):
-        today_match_data = pd.DataFrame({
-            'team_shots': [home_avg_shots],
-            'opponent_shots': [away_avg_opponent_shots]
-        })
-        return self.scaler.transform(today_match_data)
-    
+        # Handle missing values by filling with 0
+        self.df.fillna(0, inplace=True)
+
+    def load_df(self):
+            self.preprocess_data()
+            
+        
+            X = self.df.drop('home_total_shots', axis=1)
+            y = self.df['home_total_shots']
+
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+            X_train_scaled = self.scaler.fit_transform(X_train)
+            X_test_scaled = self.scaler.transform(X_test)
+            return X_train_scaled, X_test_scaled, y_train, y_test
+
 class NeuralNetwork:
     def __init__(self):
         self.model = tf.keras.Sequential([
-            tf.keras.Input(shape=(2,)),
-            tf.keras.layers.Dense(10, activation='relu',), 
-            tf.keras.layers.Dense(10, activation='relu'),
-            tf.keras.layers.Dense(1, activation='linear')
+            tf.keras.layers.Dense(100, activation='relu',), 
+            tf.keras.layers.Dense(100, activation='relu'),
+            tf.keras.layers.Dense(1)
         ])
         
         self.model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.1),
@@ -62,158 +94,79 @@ class NeuralNetwork:
                           metrics=['mae'])
         
     def train(self, X_train, y_train):
-        self.model.fit(X_train, y_train, epochs=100, verbose=1)
-    
-    def relative_accuracy(self, y_true, y_predict):
-        relative_accuracies = [abs(y_t / y_p) / y_t if y_t !=0 else 0 for y_t, y_p in zip(y_true, y_predict)]
-        avg_relative_accuracy = 1 - (sum(relative_accuracies) / len(relative_accuracies))
-        print(f"Neural Network- Relative Accuracy: {avg_relative_accuracy}")
+        history = self.model.fit(X_train, y_train, batch_size=32, epochs=100, verbose=1)
+        return history
+
         
     def evaluate(self, X_test, y_test):
-        y_predict = self.model(X_test)
+        y_predict = self.model.predict(X_test)
+        y_predict = np.array(y_predict, dtype=np.float32)
         loss, mae = self.model.evaluate(X_test, y_test, verbose=1)
-        print(f"Neural Network- Loss: {loss}, MAE: {mae}")
-        self.relative_accuracy(y_test, y_predict)
+        r2 = r2_score(y_test, y_predict)
+        print(f"Neural Network- Loss: {loss}, MAE: {mae}, r2: {r2}")
             
         
     def predict(self, data):
             return self.model.predict(data)
 
-class DecisionTree:
-    def __init__(self):
-          self.model = DecisionTreeRegressor(random_state=42)
     
-    def train(self, X_train, y_train):
-         self.model.fit(X_train, y_train)
-    
-    def relative_accuracy(self, y_true, y_predict):
-        relative_accuracies = [abs(y_t / y_p) / y_t if y_t !=0 else 0 for y_t, y_p in zip(y_true, y_predict)]
-        avg_relative_accuracy = 1 - (sum(relative_accuracies) / len(relative_accuracies))
-        print(f"Decision Tree- Relative Accuracy: {avg_relative_accuracy}")
-    
-    def evaluate(self, X_test, y_test):
-        y_predict = self.model(X_test)
-        mae = mean_absolute_error(y_test, y_predict)
-        print(f"Decision Tree- MAE: {mae}")
-        self.relative_accuracy(y_test, y_predict)
-
-    def predict(self, data):
-         return self.model.predict(data)
-
-class RandomForest:
-    def __init__(self):
-          self.model = RandomForestRegressor(random_state=42)
-
-    def train(self, X_train, y_train):
-         self.model.fit(X_train, y_train)
-
-    def relative_accuracy(self, y_true, y_predict):
-        relative_accuracies = [abs(y_t / y_p) / y_t if y_t !=0 else 0 for y_t, y_p in zip(y_true, y_predict)]
-        avg_relative_accuracy = 1 - (sum(relative_accuracies) / len(relative_accuracies))
-        print(f"Random Forest- Relative Accuracy: {avg_relative_accuracy}")
-
-    def evaluate(self, X_test, y_test):
-        y_predict = self.model(X_test)
-        mae = mean_absolute_error(y_test, y_predict)
-        print(f"Random forest- MAE: {mae}")
-        self.relative_accuracy(y_test, y_predict)
-
-    def predict(self, data):
-         return self.model.predict(data)
-
-class KNearestNeighbors:
-    def __init__(self):
-          self.model = KNeighborsRegressor(n_neighbors=5)
-    
-    def train(self, X_train, y_train):
-        self.model.fit(X_train, y_train)
-
-    def relative_accuracy(self, y_true, y_predict):
-        relative_accuracies = [abs(y_t / y_p) / y_t if y_t !=0 else 0 for y_t, y_p in zip(y_true, y_predict)]
-        avg_relative_accuracy = 1 - (sum(relative_accuracies) / len(relative_accuracies))
-        print(f"K Nearest- Relative Accuracy: {avg_relative_accuracy}")
-
-    def evaluate(self, X_test, y_test):
-        y_predict = self.model.predict(X_test)
-        mae = mean_absolute_error(y_test, y_predict)
-        print(f"K Nearest- Loss: MAE: {mae}")
-        self.relative_accuracy(y_test, y_predict)
-
-    def predict(self, data):
-         return self.model.predict(data)
-
 def main():
-    data_preperation = DataPreperation('home_shots.csv', 'away_shots.csv')
-    X_train_home, X_test_home, y_train_home, y_test_home = data_preperation.load_df(target='home')
-    ######### NEURAL NETWORK ############    
-    #Träna och förutse för Home modellen    
+
+    data_preperation = DataPreperation('fixed_merged_la_liga_results.csv')
+    X_train_home, X_test_home, y_train_home, y_test_home = data_preperation.load_df()
+
+    # ######## NEURAL NETWORK ############    
+    # #Träna och förutse för Home modellen
+    #    
     nn_model = NeuralNetwork()
-    nn_model.train(X_train_home, y_train_home)
+    nn_history = nn_model.train(X_train_home, y_train_home)
     nn_model.evaluate(X_test_home, y_test_home)
+    # home_avg_shots = data_preperation.df['team_shots'].mean()
 
-    #Träna och förutse för Opponent för home modellen 
-    #(Prediction for shots allowed from opponent when osasuna is at home)
-    X_train_opponent_home, x_test_opponent_home, y_train_opponent_home, y_test_opponent_home = data_preperation.load_df(target='opponent_home')
-    opponent_nn_model = NeuralNetwork()
-    opponent_nn_model.train(X_train_opponent_home, y_train_opponent_home)
-    opponent_nn_model.evaluate(x_test_opponent_home, y_test_opponent_home)
-    
+    #Förutse hela test settet
+    predict_test_home_shots = nn_model.predict(X_test_home)
+    predict_test_home_shots = np.array(predict_test_home_shots)
+    actual_test_home_shots = np.array(y_test_home)
 
-    #Förutse dagens match med genomsnitt på 2 modeller
-    home_avg_shots = data_preperation.home_data['team_shots'].mean()
-    away_avg_opponent_shots = data_preperation.away_data['opponent_shots'].mean()
-    today_match_data_scaled = data_preperation.scaled_today_match_data(home_avg_shots, away_avg_opponent_shots)
+    print("\nPredicted and Actual values (first 10 ex):")
+    print("Predicted:\n", predict_test_home_shots[:10])
+    print("Actual:\n", actual_test_home_shots[:10])
 
-    predict_home_shots = nn_model.predict(today_match_data_scaled)
-    predict_opponent_away_shots = opponent_nn_model.predict(today_match_data_scaled)
-    
-    print("Home average shots: ", home_avg_shots)
-    print("Away average allow opponent to shoot: ", away_avg_opponent_shots)
-    print("-----")
-    print("Model prediction at home: ", predict_home_shots)
-    print("Model prediction away allow opponent to shoot: ", predict_opponent_away_shots)
+    # print("Home average shots: ", home_avg_shots)
+    # print("Away average allow opponent to shoot: ", away_avg_opponent_shots)
+    # print("Model prediction away allow opponent to shoot: ", predict_opponent_away_shots)
 
     #Förutse av genomsnitt på både predict
-    predict_shots_home = (predict_home_shots + predict_opponent_away_shots) / 2
-    print(f"Predicted shots for Osasuna in today's match against Almeria: {predict_shots_home}")
+    # predict_shots_home = (predict_home_shots + predict_opponent_away_shots) / 2
+    # print(f"Predicted shots for Osasuna in today's match against Almeria: {predict_shots_home}")
 
-    # ###############################
-    # ######### DECISION TREE ############
-    # dt_model = DecisionTree()
-    # dt_model.train(X_train_home, y_train_home)
-    # dt_model.evaluate(X_test_home, y_test_home)
+    #Plot history (Loss curve)
+    plt.figure(figsize=(10,7))
+    plt.plot(nn_history.history['loss'], label='Loss training')
+    plt.ylabel("loss")
+    plt.xlabel("epochs")
+    plt.legend()
+    plt.show()
+
+    #plot training data
+    xAxis = tf.range(0, len(X_test_home))
+    xAxis, y_test_home[0:len(X_test_home)]
+
+    xAxis = tf.range(0, len(X_test_home))
+
+    yAxis = y_test_home.to_numpy()
+    yAxis = tf.cast(yAxis, tf.float32)
+    shot_modelPredictYAxis = tf.cast(predict_test_home_shots, tf.float32)
     
-    # predict_dt_shots = dt_model.predict(today_match_data_scaled)
-    # print(f"Decision Tree prediction for Osasuna: {predict_dt_shots}")
-
-    # ###############################
-    # ######### RANDOM FOREST ############
-    # rf_model = RandomForest()
-    # rf_model.train(X_train_home, y_train_home)
-    # rf_model.evaluate(X_test_home, y_test_home)
-
-    # predict_rf_shots = rf_model.predict(today_match_data_scaled)
-    # print(f"Random Forest prediction for Osasuna: {predict_rf_shots}")
-
-    ###############################
-    #####K-Nearest Neighbors#######
-    knn_model = KNearestNeighbors()
-    knn_model.train(X_train_home, y_train_home)
-    knn_model.evaluate(X_test_home, y_test_home)
-
-    opponent_knn_model = KNearestNeighbors()
-    opponent_knn_model.train(X_train_opponent_home, y_train_opponent_home)
-    opponent_knn_model.evaluate(x_test_opponent_home, y_test_opponent_home)
-
-    predict_knn_shots = knn_model.predict(today_match_data_scaled)
-    predict_knn_opponent = opponent_knn_model.predict(today_match_data_scaled)
-
-    print(f"K Nearest prediction for Osasuna: {predict_knn_shots}")
-    print(f"K Nearest prediction for opponent: {predict_knn_opponent}")
-
-    predict_knn_total = (predict_knn_shots + predict_knn_opponent) / 2
-    print(f"K Nearest predicted shots for Osasuna in today's match against Almeria: {predict_knn_total}") 
+    plt.figure(figsize=(10,7))
+    plt.scatter(xAxis, yAxis, c='g', label="Test data")
+    #plot TEST data
+    plt.scatter(xAxis, shot_modelPredictYAxis, c='r', label="predictions")
+    #plot predictions
+    plt.legend()
+    plt.show()
     
+
 if __name__ == "__main__":
     main()
 
