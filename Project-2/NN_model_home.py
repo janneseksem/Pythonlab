@@ -8,38 +8,38 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import classification_report
 
-
+#Class som förbereder data och kolla null värden
 class DataPreperation:
     def __init__(self, merged_csv):
         self.scaler = StandardScaler()
         self.df = pd.read_csv(merged_csv)
-
+    #One hot coding 
     def OneHot(self):
-        
         self.df = pd.get_dummies(self.df)
 
         X = self.df.drop('home_total_shots', axis=1)
         y = self.df['home_total_shots']
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
+        #Lösa alla null i .csv
         missing_cols = X_train.columns[X_train.isnull().any()]
         X_train = X_train.drop(columns=missing_cols)
         X_test = X_test.drop(columns=missing_cols)
-
+        #Scaling
         X_train_scaled = pd.DataFrame(self.scaler.fit_transform(X_train), columns=X_train.columns)
         X_test_scaled = pd.DataFrame(self.scaler.fit_transform(X_test), columns=X_test.columns)
-
         X_train_scaled.dropna(axis=1, inplace=True)
         X_test_scaled.dropna(axis=1, inplace=True)
-        return X_train_scaled, X_test_scaled, y_train, y_test
 
+        return X_train_scaled, X_test_scaled, y_train, y_test
+    
+#Class för Neural Network modellen
 class NeuralNetwork:
     def __init__(self):
-        
+        #Skapa modellen
         self.model = tf.keras.Sequential([
-            tf.keras.layers.Dense(100, activation='elu',), 
-            tf.keras.layers.Dense(100, activation='elu'),
+            tf.keras.layers.Dense(100, activation='relu',), 
+            tf.keras.layers.Dense(100, activation='relu'),
             tf.keras.layers.Dense(1)
         ])
         
@@ -47,10 +47,12 @@ class NeuralNetwork:
                           loss='mean_squared_error',
                           metrics=['mae'])
         
+    #Träna
     def train(self, X_train, y_train):
         history = self.model.fit(X_train, y_train, epochs=100, verbose=0)
         return history
-
+    
+    #Visa rapport om modellen, return predict
     def evaluate(self, X_test, y_test):
         y_predict = self.model.predict(X_test)
         loss, mae = self.model.evaluate(X_test, y_test, verbose=1)
@@ -58,9 +60,10 @@ class NeuralNetwork:
         print(f"Neural Network- Loss: {loss}, MAE: {mae}, r2: {r2}")
         return y_predict
     
+#Class för Random Forest modellen
 class RandomForest:
     def __init__(self):
-
+        #Parameter grid
         self.param_grid = {
             'n_estimators': [100, 200, 300],
             'max_depth': [None, 10, 20, 30],
@@ -69,12 +72,14 @@ class RandomForest:
          }
         self.grid_search = None
 
+    #Träna modellen
     def train(self, X_train, y_train):
         rf = RandomForestRegressor(random_state=42)
         self.grid_search = GridSearchCV(estimator=rf, param_grid=self.param_grid, cv=5, n_jobs=-1, verbose=2, scoring='r2')
         self.grid_search.fit(X_train, y_train)
         return self.grid_search
     
+    #Visa rapport om modellen, return predict
     def evaluate(self, X_test, y_test):
         if self.grid_search is not None:
              
@@ -88,13 +93,15 @@ class RandomForest:
 
 
 def main():
-
+    #Ladda .csv in i vår class
     data_preperation = DataPreperation('fixed_merged_la_liga_results.csv')
     X_train_home, X_test_home, y_train_home, y_test_home = data_preperation.OneHot()
-
+    '''
+    Gör Comment out härifrån fram till Random Forest för testa fram Neural Network
+    '''
     # ######## NEURAL NETWORK ############
-    # #Neural Network- Loss: 21.72272300720215, 
-    # #MAE: 3.5236146450042725, r2: 0.40612727403640747
+    # #Neural Network- Loss: 37.224037170410156, 
+    # #MAE: 4.906871795654297, r2: -0.16855597496032715
     # #Träna och förutse för Home modellen
     
     # nn_model = NeuralNetwork()
@@ -156,7 +163,7 @@ def main():
     #utför bästa modellenn på test datan (X_test)
     rf_y_predict = grid_search.best_estimator_.predict(X_test_home)
 
-    #Frutse hela test settet
+    #Förutse hela test settet
     rf_y_predict = np.array(rf_y_predict)
     rf_actual_test_shots = np.array(y_test_home)
     print("Predicted and actual values (first 10 example):")
