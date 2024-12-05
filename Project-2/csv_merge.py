@@ -1,5 +1,16 @@
 import pandas as pd
 
+
+'''
+En från Kaggle och en från footystats. Features från Footystats 
+läggs in i Kaggle filen, vilket är Possession. 
+En feature som antas vara viktigt för se
+hur dominanta laget är.
+- Ladda både CSV
+- Sortera och mapping
+- Merga filen in i Kaggle .csv
+- Spara i .csv
+'''
 # Ladda csv filer som ska mergas
 footstats_df = pd.read_csv('spain-la-liga-matches-2023-to-2024-stats.csv')
 kaggle_df = pd.read_csv('la_liga_results_2324.csv')

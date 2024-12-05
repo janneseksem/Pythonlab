@@ -9,6 +9,12 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
 
+######RANDOM FOREST##########
+# Bästa cross-validation score: 0.5033404958347004
+# Train Accuracy: 0.838
+# Test Accuracy (r2): 0.524
+# Mean Squared Error: 15.15390049141198
+
 # Ladda vår data till Dataframe
 df = pd.read_csv('fixed_merged_la_liga_results.csv')
 
@@ -70,6 +76,12 @@ y_predict = best_model.predict(X_test_scaled)
 mse = mean_squared_error(y_test, y_predict)
 print("Mean Squared Error:", mse)
 
+#Förutse hela test settet
+y_predict = np.array(y_predict)
+actual_test_home_shots = np.array(y_test)
+print("\nPredicted and Actual values (first 10 ex):")
+print("Predicted:\n", y_predict[:10])
+print("Actual:\n", actual_test_home_shots[:10])
 
 #Plotta GridSearchCV resultat med MTS v Hyperparameterna
 results = pd.DataFrame(grid_search.cv_results_)
@@ -84,13 +96,11 @@ plt.show()
 #plot training data
 xAxis = tf.range(0, len(X_test))
 xAxis, y_test[0:len(X_test)]
-
 xAxis = tf.range(0, len(X_test))
-
 yAxis = y_test.to_numpy()
 yAxis = tf.cast(yAxis, tf.float32)
 shot_modelPredictYAxis = tf.cast(y_predict, tf.float32)
-    
+
 plt.figure(figsize=(10,7))
 plt.scatter(xAxis, yAxis, c='g', label="Test data")
 #plot TEST data
