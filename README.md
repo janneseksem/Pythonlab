@@ -1,77 +1,133 @@
-# Pythonlab
-Pythonprogrammering-for-AI-utveckling-HT24 
 
-Project-1: Console-Based Blackjack Game
-Overview
+---
 
-This project is a simple console-based implementation of the popular card game Blackjack.
-How to Play
+# Pythonlab  
+**Pythonprogrammering för AI-utveckling - HT24**
 
-    The rules are implemented within the code.
-    The game starts immediately: the player is dealt the first and third card, while the dealer receives the second card.
-    Use the command hit to draw another card or stand to keep your current hand.
-    The game ends when either the player or the dealer wins.
-    After the game ends, the player can choose to play again by entering y, or exit the game with n.
+---
 
-Getting Started
+## Project-1: Console-Based Blackjack Game  
 
-To run the game, simply execute the Python script in a console. Make sure you have Python 3.x installed.
+### Overview  
+This project is a simple console-based implementation of the popular card game **Blackjack**.
 
-Project-2: Modeling for Home/Away team shots
+### How to Play  
+1. The rules are implemented within the code.  
+2. The game starts immediately: the player is dealt the first and third card, while the dealer receives the second card.  
+3. Use the command `hit` to draw another card or `stand` to keep your current hand.  
+4. The game ends when either the player or the dealer wins.  
+5. After the game ends, the player can choose to play again by entering `y`, or exit the game with `n`.
 
-Introduktion och översikt över projektidén
+### Getting Started  
+To run the game, simply execute the Python script in a console. Ensure you have **Python 3.x** installed.
 
-Projektet syftar till att utveckla modell för att förutsäga antalet skott ett lag kommer att försöka under en match och de tillhörande sannolikhet för att uppnå specifika skottresultat. Genom att utnyttja historiska data från den tillhandahållna CSV-filen försöker modellen identifiera betydande mönster och trender som påverkar en av teamets prestationer.
+---
 
-Starta och testa programmet:
-Alternativ 1 - 
-1. Ladda ner 'fixed_merged_la_liga_results.csv'
-2. Köra 'team_model_home.py'
+## Project-2: Modeling for Home/Away Team Shots  
 
-Alternativ 2 -
-1. Ladda ner 'la_liga_results_2324.csv' och 'spain-la-liga-matches-2023-to-2024-stats.csv'
-2. Köra 'csv_merge.py', då sparas en ny fil kallas 'fixed_merged_la_liga_results.csv'
-3. Köra 'team_model_home.py'
+### Introduction  
+The project aims to develop a model for predicting the number of shots a team will attempt during a match and the probabilities of achieving specific shot outcomes. By leveraging historical data from the provided CSV files, the model identifies significant patterns and trends affecting team performance.
 
-Dataanalys och förbearbetning
+---
 
-Datauppsättningen från filen spain-la-liga-matches-2023-to-2024-stats.csv som finns i footystats kan laddas ned .csv fil och la_liga_results_2324.csv' från Kaggle användare som jag mejlade om nyare data matcher från 2023 till 2024. Detta kommer att genomgå utforskande dataanalys för att identifiera nyckelfaktorer som påverkar skottförsök. För Bearbetningsfasen kommer att innefatta data cleaning, handling missing values, och normalisering av variabler för att förbättra modellens träningseffektivitet. Relevanta funktioner som lagstatistik kommer att identifieras för modellinmatning.
+### Start and Test the Program  
 
-Att bygga den prediktiva modell
+**Option 1**:  
+1. Download `fixed_merged_la_liga_results.csv`.  
+2. Run `team_model_home.py`.
 
-Modellen kommer att konstrueras för att förutsäga antalet skott som varje lag försöker göra genom att kolla hur många skott Hemma och borta laget skjuts, men samt använda motståndarens antal skott som har skjutit mot laget. Andra mindre viktiga features används för se lagets prestanda vid offensivt eller defensivt spelande.  Modellen för Neural network kommer att tränas med hjälp av en backpropagation-algoritm, med loss function och en adaptive optimizer som testar fram exempelvis Adam. Data Uppsättningen kommer att delas upp i training- och test sets. Random Forest modellen kommer även tränas i en seperat class för att jämföra två modellerna hur de kan hantera projektets insamlingsdata.
+**Option 2**:  
+1. Download `la_liga_results_2324.csv` and `spain-la-liga-matches-2023-to-2024-stats.csv`.  
+2. Run `csv_merge.py` to create a new file named `fixed_merged_la_liga_results.csv`.  
+3. Run `team_model_home.py`.
 
-Sammanfattningsvis
+---
 
-Detta projekt använder sig av ett neural network och Random forest för att förutsäga skottförsök i fotbollsmatcher och härleda modellbaserad sannolikhet. De prediktiva insikterna som genereras kommer att bidra till bättre strategiskt beslutsfattande för team och mer informerade risk utvärderingar. Flera olika metoder kommer testas tills man får en relevant accuracy för sin modell. Rapporten är dokumenterat för djupare analys inom denna projektet.
+### Data Analysis and Preprocessing  
 
-Resultat
-Neural network: Neural Network- Loss: 17.663623809814453, MAE: 3.2723398208618164, r2: 0.4454943537712097
+The dataset from `spain-la-liga-matches-2023-to-2024-stats.csv` (from FootyStats) and `la_liga_results_2324.csv` (acquired from Kaggle) was analyzed for key factors influencing shot attempts.  
 
-Predicted and Actual values (first 10 ex):
-Predicted:
- [15.633022 16.91614  12.180565 14.209396 16.072697 16.500029 13.074678
- 13.025862 12.287777 14.876021]
-Actual:
- [14 21  9 10 20 20 12  5 10 15]
+**Steps Involved**:
+1. **Exploratory Data Analysis**: Identifying key features and trends in the dataset.  
+2. **Preprocessing**:
+   - Data cleaning.  
+   - Handling missing values using `fillna` with median values.  
+   - Normalizing variables for better model performance.  
+3. **Feature Selection**: Relevant statistics like team performance metrics were selected for model input.
 
-Random Forest- MSE: 15.416986047642112
-Bästa parametrar: {'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 200}
-Bästa cross-validation score: 0.4980888886682703
-Train Accuracy: 0.912
-Test Accuracy (r2): 0.516
-Predicted and actual values (first 10 example):
-Predicted: 
- [14.73426587 17.83588294 11.28047421 12.99286977 13.59784037 18.55863131
- 12.41344282 12.53622421 11.98390079 13.57627381]
-Actual: 
- [14 21  9 10 20 20 12  5 10 15]
+---
 
- Förbättringar
- - Sätter in värden när NaN värden finns med. fillna i median används
- - Försäktra shape är korrekt
- - Transform istället för fit_transform för unvdika data leakage
- - Noder sänkts eftersom data samling är lägre än förväntat
- - Dropout och Batchnormalization och Early stopping används för förbättra accuracy
- - Parameter grid används för hitta bästa parametrar och få bättre accuracy
- - one hot är viktig för features och labels
+### Building the Predictive Model  
+
+**Objective**: Predict the number of shots each team attempts in a match.  
+1. **Features**: Includes home and away team shot counts, opponent stats, and other performance metrics.  
+2. **Models Used**:
+   - **Neural Network**: Trained using backpropagation, adaptive optimizers (e.g., Adam), and improved with techniques like dropout and batch normalization.  
+   - **Random Forest**: Used as a comparative model, tuned with a parameter grid to find the best configuration.  
+3. **Data Splitting**: The dataset is split into training and test sets.  
+
+---
+
+### Results  
+
+#### Neural Network:  
+- **Loss**: 17.66  
+- **Mean Absolute Error (MAE)**: 3.27  
+- **R² Score**: 0.445  
+
+**Predicted vs Actual Values (First 10 Examples)**:
+| **Predicted** | **Actual** |
+|---------------|------------|
+| 15.63         | 14         |
+| 16.91         | 21         |
+| 12.18         | 9          |
+| 14.21         | 10         |
+| 16.07         | 20         |
+| 16.50         | 20         |
+| 13.07         | 12         |
+| 13.02         | 5          |
+| 12.28         | 10         |
+| 14.87         | 15         |
+
+---
+
+#### Random Forest:  
+- **Mean Squared Error (MSE)**: 15.41  
+- **Best Parameters**: `{'max_depth': None, 'min_samples_leaf': 1, 'min_samples_split': 5, 'n_estimators': 200}`  
+- **Best Cross-Validation Score**: 0.498  
+- **Train Accuracy**: 91.2%  
+- **Test Accuracy (R²)**: 0.516  
+
+**Predicted vs Actual Values (First 10 Examples)**:
+| **Predicted** | **Actual** |
+|---------------|------------|
+| 14.73         | 14         |
+| 17.83         | 21         |
+| 11.28         | 9          |
+| 12.99         | 10         |
+| 13.59         | 20         |
+| 18.55         | 20         |
+| 12.41         | 12         |
+| 12.53         | 5          |
+| 11.98         | 10         |
+| 13.57         | 15         |
+
+---
+
+### Improvements  
+
+1. Handling `NaN` values using `fillna` with median values.  
+2. Ensuring proper shape consistency for inputs and outputs.  
+3. Using `transform` instead of `fit_transform` to avoid data leakage.  
+4. Reducing the number of nodes due to the smaller dataset size.  
+5. Adding dropout, batch normalization, and early stopping to improve accuracy.  
+6. Hyperparameter tuning with a parameter grid for Random Forest.  
+7. Applying one-hot encoding for categorical features.
+
+---
+
+### Summary  
+
+This project leverages neural networks and Random Forest models to predict shot attempts in football matches and derive probabilities based on historical data. The predictive insights generated can help improve team strategy and risk evaluation. Various optimization techniques and hyperparameter tuning were implemented to achieve better model accuracy and performance.
+
+---
