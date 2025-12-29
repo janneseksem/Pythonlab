@@ -6,23 +6,6 @@
 
 ---
 
-## Project-1: Console-Based Blackjack Game  
-
-### Overview  
-This project is a simple console-based implementation of the popular card game **Blackjack**.
-
-### How to Play  
-1. The rules are implemented within the code.  
-2. The game starts immediately: the player is dealt the first and third card, while the dealer receives the second card.  
-3. Use the command `hit` to draw another card or `stand` to keep your current hand.  
-4. The game ends when either the player or the dealer wins.  
-5. After the game ends, the player can choose to play again by entering `y`, or exit the game with `n`.
-
-### Getting Started  
-To run the game, simply execute the Python script in a console. Ensure you have **Python 3.x** installed.
-
----
-
 ## Project-2: Modeling for Home/Away Team Shots  
 
 ### Introduction  
@@ -129,5 +112,22 @@ The dataset from `spain-la-liga-matches-2023-to-2024-stats.csv` (from FootyStats
 ### Summary  
 
 This project leverages neural networks and Random Forest models to predict shot attempts in football matches and derive probabilities based on historical data. The predictive insights generated can help improve team strategy and risk evaluation. Various optimization techniques and hyperparameter tuning were implemented to achieve better model accuracy and performance.
+
+---
+
+## Project-1: Console-Based Blackjack Game  
+
+### Overview  
+This project is a simple console-based implementation of the popular card game **Blackjack**.
+
+### How to Play  
+1. The rules are implemented within the code.  
+2. The game starts immediately: the player is dealt the first and third card, while the dealer receives the second card.  
+3. Use the command `hit` to draw another card or `stand` to keep your current hand.  
+4. The game ends when either the player or the dealer wins.  
+5. After the game ends, the player can choose to play again by entering `y`, or exit the game with `n`.
+
+### Getting Started  
+To run the game, simply execute the Python script in a console. Ensure you have **Python 3.x** installed.
 
 ---
